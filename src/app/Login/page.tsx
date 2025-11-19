@@ -1,16 +1,31 @@
 "use client";
 
 import { useState, FormEvent } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const router = useRouter();
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    console.log("Email:", email);
-    console.log("Password:", password);
-  };
+  const handleSubmit = async (e: FormEvent) => {
+  e.preventDefault();
+
+  try {
+    const res = await axios.post("/api/users/Login", {
+      email,
+      password,
+    });
+
+    alert("Login Successful!");
+    console.log("Token:", res.data.token);
+   router.push("/profile");
+  } catch (error: any) {
+    alert(error.response?.data?.message || "Login failed");
+  }
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
