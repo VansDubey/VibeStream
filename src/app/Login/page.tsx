@@ -9,23 +9,42 @@ export default function LoginPage() {
   const [password, setPassword] = useState<string>("");
   const router = useRouter();
 
+  // ----------------------------------
+  // FORGOT PASSWORD HANDLER
+  // ----------------------------------
+  const handleForgotPassword = async () => {
+    if (!email) {
+      alert("Please enter your email first.");
+      return;
+    }
+
+    try {
+      const res = await axios.post("/api/users/sendForgetPasswordMail", { email });
+
+      alert(res.data.message || "Reset email sent.");
+    } catch (error: any) {
+      alert(error.response?.data?.message || "Error sending reset email");
+    }
+  };
+
+  // ----------------------------------
+  // LOGIN SUBMIT
+  // ----------------------------------
   const handleSubmit = async (e: FormEvent) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    const res = await axios.post("/api/users/Login", {
-      email,
-      password,
-    });
+    try {
+      const res = await axios.post("/api/users/Login", {
+        email,
+        password,
+      });
 
-    alert("Login Successful!");
-    console.log("Token:", res.data.token);
-   router.push("/profile");
-  } catch (error: any) {
-    alert(error.response?.data?.message || "Login failed");
-  }
-};
-
+      alert("Login Successful!");
+      router.push("/profile");
+    } catch (error: any) {
+      alert(error.response?.data?.message || "Login failed");
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
@@ -39,7 +58,9 @@ export default function LoginPage() {
             <input
               type="email"
               required
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              autoComplete="email"
+              className="w-full px-4 py-2 border rounded-lg
+              focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -52,22 +73,36 @@ export default function LoginPage() {
             <input
               type="password"
               required
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              autoComplete="current-password"
+              className="w-full px-4 py-2 border rounded-lg
+              focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
 
-          {/* Button */}
+          {/* Login Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition"
+            className="w-full bg-blue-600 hover:bg-blue-700
+            text-white py-2 rounded-lg transition"
           >
             Login
           </button>
 
-          {/* Link */}
+          {/* Forgot Password */}
+          <p className="text-center text-sm mt-2">
+            <button
+              type="button"
+              onClick={handleForgotPassword}
+              className="text-blue-600 hover:underline"
+            >
+              Forgot Password?
+            </button>
+          </p>
+
+          {/* Sign Up Link */}
           <p className="text-center text-sm mt-3">
             Don’t have an account?{" "}
             <a href="/signup" className="text-blue-600 hover:underline">

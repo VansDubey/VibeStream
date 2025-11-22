@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import User from "@/src/models/userModel";
 import { connect } from "@/src/app/dbConfig/dbConfig";
 import jwt from "jsonwebtoken";
+import { sendEmail } from "@/src/helpers/mailer";
 
 connect();
 
@@ -32,6 +33,9 @@ export async function POST(req: NextRequest) {
       process.env.JWT_SECRET!,
       { expiresIn: "7d" }
     );
+
+    //Send the verification Email
+    await sendEmail({ email: user.email, emailType: "VERIFY", userId: user._id.toString(), });
 
     return NextResponse.json(
       {

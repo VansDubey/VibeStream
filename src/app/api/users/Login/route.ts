@@ -3,6 +3,7 @@ import User from "@/src/models/userModel";
 import { connect } from "@/src/app/dbConfig/dbConfig";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { sendEmail } from "@/src/helpers/mailer";
 
 connect();
 
